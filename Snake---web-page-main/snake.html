@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>змейка</title>
+<style type="text/css">
+canvas{
+	border:2px solid grey;
+}
+body{
+	background-color: black;
+	display: flex;
+    align-items: center;
+    justify-content: center;
+}
+</style>
+</head>
+<body>
+<canvas width="300" height="300" id="canvas"></canvas>
+<script type="text/javascript">
+/////переменные
+var canvas = document.getElementById('canvas')
+var set = canvas.getContext('2d')
+var block = 10 //клетка
+var snec = 4 //колличество хвоста
+var score = 0  //счет
+var pos = 'right' // направление змеи
+var snake = [ //массив змеиного тела по x и y
+[3,5],
+[2,5],
+[1,5]
+]
+
+var random = function(min,max){ 
+ return (Math.floor(Math.random () * (max - min)) + min)
+}
+var apple = {
+	x : random(0,30),
+	y : random(0,30)
+}
+////код
+function game(){
+ //косание змеиной головы яблока
+ if (snake[0][0] === apple.x && snake[0][1] === apple.y){
+ 	apple.x = random(0,30)
+ 	apple.y = random(0,30)
+ 	snec ++
+ 	score ++
+ 	snake.push(snake[snake.lenght - 1])
+ }
+ //перемещение из одного края в другой
+ if (snake[0][0] > 29){
+	snake[0][0] = 0
+ }
+ if (snake[0][0] < 0){
+	snake[0][0] = 29
+ }
+ if (snake[0][1] < 0){
+	snake[0][1] = 29
+ }
+ if (snake[0][1] > 29){
+	snake[0][1] = 0
+ }
+ 
+}
+//назначение клавиш
+document.addEventListener('keydown',function(e){
+if (e.which === 39 && pos !== 'left'){
+ pos = 'right'
+}
+if (e.which === 37 && pos !== 'right'){
+ pos = 'left'
+}
+if (e.which === 38 && pos !== 'down'){
+ pos = 'up'
+}
+if (e.which === 40 && pos !== 'up'){
+ pos = 'down'
+}
+if (e.which === 68 && pos !== 'left'){
+ pos = 'right'
+}
+if (e.which === 65 && pos !== 'right'){
+ pos = 'left'
+}
+if (e.which === 87 && pos !== 'down'){
+ pos = 'up'
+}
+if (e.which === 83 && pos !== 'up'){
+ pos = 'down'
+}	
+})
+
+setInterval(function(){
+set.fillStyle = 'black'
+set.fillRect(0,0,300,300)
+// перемещение
+if (pos === 'right'){
+	snake.unshift([++snake[0][0],snake[0][1]])
+}
+if (pos === 'down'){
+	snake.unshift([snake[0][0],++snake[0][1]])
+}
+if (pos === 'left'){
+	snake.unshift([--snake[0][0],snake[0][1]])
+}
+if (pos === 'up'){
+	snake.unshift([snake[0][0],--snake[0][1]]) 
+}
+//отрисовка змеи
+set.fillStyle = 'green'
+for (i = 0; i < snec; ++i){
+ set.fillRect(snake[i][0] * block,snake[i][1] * block,10,10)
+ if (i > 1){
+  if (snake[0][0] === snake[i][0] && snake[0][1] === snake[i][1]){ // откусывание хвоста
+   snec -= snec -  i
+  } 
+ }
+}
+// отрисовка яблока
+set.fillStyle = 'red'
+set.fillRect(apple.x * block,apple.y * block,10,10)
+game()
+},60)
+</script>
+</body>
+</html>
